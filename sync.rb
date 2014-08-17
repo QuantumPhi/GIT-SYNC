@@ -5,9 +5,10 @@ CLIENT_ID = ENV['GH_BASIC_CLIENT_ID']
 CLIENT_SECRET = ENV['GH_BASIC_SECRET_ID']
 
 def auth(username, password)
-    response = RestClient.post "https://#{username}:#{password}@api.github.com/authorizations",
-                                { :params => { 'scopes' => ['user', 'repo'], 'note' => 'octocat-sync' } }
-    puts response;
+    puts "#{username}:#{password}"
+    response = RestClient.post("https://#{username}:#{password}@api.github.com/authorizations",
+    { :scopes => ["user", "repo"], :note => "sync" }.to_json, :accept => :json)
+    puts response
 end
 
-auth()
+auth(ARGV[0], ARGV[1])
