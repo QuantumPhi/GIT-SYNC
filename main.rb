@@ -43,7 +43,7 @@ def init_auth(password)
     end
 end
 
-def authenticate()
+def authenticate
     if authenticated
         file = File.readlines(File.open("#{HOME}/.config/gitconfig-sync"))
         $user = file[1].split(/\:\s/)[1]
@@ -53,7 +53,7 @@ def authenticate()
     end
 end
 
-def sync_push()
+def sync_push
     if !repo_exists
         puts "creating repository"
         result = RestClient.post("https://api.github.com/user/repos",
