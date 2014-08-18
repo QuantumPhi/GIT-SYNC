@@ -1,10 +1,9 @@
 require 'fileutils'
 require 'io/console'
+require 'git'
 require 'json'
-require 'open-uri'
 require 'rest-client'
 require 'rubygems'
-require 'git'
 
 HOME = ENV["HOME"]
 
@@ -61,7 +60,7 @@ def sync_push
                     :accept => :json, :Authorization => "token #$token")
     end
 
-    Dir.chdir "#{HOME}" do
+    Dir.chdir HOME do
         puts "initializing local repository"
         git = Git.init
         puts "updating origin"
@@ -74,20 +73,31 @@ def sync_push
 
         puts "cleaning directory"
         FileUtils.rm_rf(".git")
+
+        puts "finished"
     end
 end
 
 def sync_pull(username = $user)
-    puts "downloading gitconfig"
-    data = URI.parse("https://github.com/#{username}/gitconfig/master/.gitconfig").read
+    Dir.chdir HOME do
+        puts "initializing local repository"
+        git = Git.init
 
-    file = File.open("#{HOME}/.gitconfig")
+        puts "updating origin"
+        git.add_remote("origin", "https://#$token@github.com/#$user/gitconfig.git")
 
-    puts "clearing gitconfig"
-    file.truncate(0)
+        puts "creating backup of gitconfig"
+        FileUtils.mv(".gitconfig", ".gitconfig.backup")
 
-    puts "writing to gitconfig"
-    file.write(data)
+        puts "pulling new gitconfig"
+        git.pull
+
+        puts "cleaning directory"
+        FileUtils.rm_rf(".gitconfig.backup")
+        FileUtils.rm_rf(".git")
+
+        puts "finished"
+    end
 end
 
 if ARGV[0] == "--push"
