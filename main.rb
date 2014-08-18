@@ -15,6 +15,17 @@ def authenticated
     return File.exist?("#{HOME}/.config/gitconfig-sync")
 end
 
+def repo_exists(username = $user)
+    RestClient.get("https://github.com/repos/#{username}/gitconfig",
+                    :Authorization => "token #$token") { |response, request, result, &block|
+                        if response.code != 404
+                            return true
+                        else
+                            return false
+                        end
+                    }
+end
+
 def query_user_pass
     print "Username\: "
     $user = STDIN.gets.chomp
@@ -43,14 +54,11 @@ def authenticate()
 end
 
 def sync_push()
-    puts "creating repository"
-    result = RestClient.post("https://api.github.com/user/repos",
-                { :name => "gitconfig", :description => "My gitconfig" }.to_json,
-                  :accept => :json, :Authorization => "token #$token")
-    if result.code == 201
-        result = JSON.parse(result)
-    else
-        puts "error:\n#{result}"
+    if !repo_exists
+        puts "creating repository"
+        result = RestClient.post("https://api.github.com/user/repos",
+                    { :name => "gitconfig", :description => "My gitconfig" }.to_json,
+                    :accept => :json, :Authorization => "token #$token")
     end
 
     puts "initializing local repository"
