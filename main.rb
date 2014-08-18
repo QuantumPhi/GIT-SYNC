@@ -4,7 +4,7 @@ require 'json'
 require 'open-uri'
 require 'rest-client'
 require 'rubygems'
-require 'ruby-git'
+require 'git'
 
 HOME = ENV["HOME"]
 
@@ -16,8 +16,8 @@ def authenticated
 end
 
 def repo_exists(username = $user)
-    RestClient.get("https://github.com/repos/#{username}/gitconfig",
-                    :Authorization => "token #$token") { |response, request, result, &block|
+    RestClient.get("https://api.github.com/repos/#{username}/gitconfig",
+                    { :Authorization => "token #$token" }) { |response, request, result, &block|
                         if response.code != 404
                             return true
                         else
@@ -46,8 +46,8 @@ end
 def authenticate
     if authenticated
         file = File.readlines(File.open("#{HOME}/.config/gitconfig-sync"))
-        $user = file[1].split(/\:\s/)[1]
-        $token = file[2].split(/\:\s/)[1]
+        $user = file[1].split(/\:\s/)[1].strip!
+        $token = file[2].split(/\:\s/)[1].strip!
     else
         query_user_pass
     end
@@ -61,24 +61,25 @@ def sync_push
                     :accept => :json, :Authorization => "token #$token")
     end
 
-    puts "initializing local repository"
-    g = Git.init("#{HOME}")
+    Dir.chdir "#{HOME}" do
+        puts "initializing local repository"
+        git = Git.init
+        puts "updating origin"
+        git.add_remote("origin", "https://#$token@github.com/#$user/gitconfig.git")
 
-    puts "updating origin"
-    g.add_remote("origin", "https://github.com/#$user/gitconfig")
+        puts "uploading gitconfig"
+        git.add(".gitconfig")
+        git.commit("Synchronized gitconfig")
+        git.push(git.remote("origin"))
 
-    puts uploading gitconfig
-    g.add("#{HOME}/.gitconfig")
-    g.commit("Synchronized gitconfig")
-    g.push(g.remote("origin"))
-
-    puts "cleaning directory"
-    FileUtils.rm_rf("#{HOME}/.git")
+        puts "cleaning directory"
+        FileUtils.rm_rf(".git")
+    end
 end
 
 def sync_pull(username = $user)
     puts "downloading gitconfig"
-    data = URI.parse("https://github.com/#{username}/gitconfig").read
+    data = URI.parse("https://github.com/#{username}/gitconfig/master/.gitconfig").read
 
     file = File.open("#{HOME}/.gitconfig")
 
