@@ -83,6 +83,8 @@ module SyncConfig
             }
             puts "Done"
 
+            clean_success %w(.gitconfig.backup)
+
             puts "Finished"
         end
     end
