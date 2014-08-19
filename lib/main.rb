@@ -18,9 +18,7 @@ module SyncConfig
     $token = ""
 
     def push
-        print "Checking authentication"
         authenticate
-        puts "Done"
         if !repo_exists
             print "Creating upstream repository..."
             wait_task {
@@ -87,9 +85,9 @@ module SyncConfig
         end
     end
 
-    module_function :push, :pull, :authenticated?, :query_user_pass, :init_auth, :authenticate, :repo_exists
+    module_function :push, :pull, :authenticated?, :query_user_pass, :init_auth, :authenticate, :repo_exists, :wait_task
     public :push, :pull
-    private :authenticated?, :query_user_pass, :init_auth, :authenticate, :repo_exists
+    private :authenticated?, :query_user_pass, :init_auth, :authenticate, :repo_exists, :wait_task
 end
 
 SyncConfig.methods.each do |method|

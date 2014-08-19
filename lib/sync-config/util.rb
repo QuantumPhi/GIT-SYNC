@@ -10,10 +10,10 @@ module SyncConfig
                 print "\b"
             end
         end
-        yield.tap{
+        yield.tap do
             iter = false
             spinner.join
-        }
+        end
     end
 
     def repo_exists(username = $user)
