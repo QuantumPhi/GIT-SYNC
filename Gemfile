@@ -1,0 +1,7 @@
+source 'https://rubygems.org'
+require 'fileutils'
+require 'io/console'
+require 'git'
+require 'json'
+require 'rest-client'
+require 'rubygems'
