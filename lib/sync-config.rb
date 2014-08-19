@@ -89,9 +89,14 @@ module SyncConfig
         end
     end
 
-    module_function :push, :pull, :authenticated?, :query_user_pass, :init_auth, :authenticate, :repo_exists, :wait_task
-    public :push, :pull
-    private :authenticated?, :query_user_pass, :init_auth, :authenticate, :repo_exists, :wait_task
+    SyncConfig.instance_methods.each do |method|
+        module_function :"#{method}"
+        if method == "push" || method == "pull"
+            public :"#{method}"
+        else
+            private :"#{method}"
+        end
+    end
 end
 
 SyncConfig.methods.each do |method|
