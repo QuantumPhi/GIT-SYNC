@@ -7,8 +7,8 @@ require 'fileutils'
 require 'git'
 require 'rest-client'
 
-require 'sync-config/auth'
-require 'sync-config/util'
+require 'sync-config/sync-auth'
+require 'sync-config/sync-util'
 
 
 module SyncConfig
@@ -31,6 +31,7 @@ module SyncConfig
 
         Dir.chdir HOME do
             print "Initializing local repository..."
+            git = nil;
             wait_task {
                 git = Git.init
             }
