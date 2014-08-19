@@ -1,4 +1,4 @@
-module GitSync
+module SyncConfig
     module Repo
         def repo_exists(username = $user)
             RestClient.get("https://api.github.com/repos/#{username}/gitconfig",

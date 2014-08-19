@@ -1,4 +1,4 @@
-# .
+# Sync-Config
 
 TODO: Write a gem description
 

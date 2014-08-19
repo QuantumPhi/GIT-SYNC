@@ -1,5 +1,5 @@
-require 'gitsync/authenticate'
-require 'gitsync/repo'
+require 'sync-config/authenticate'
+require 'sync-config/repo'
 
 HOME = ENV["HOME"]
 
