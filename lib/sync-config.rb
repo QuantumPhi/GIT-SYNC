@@ -59,7 +59,7 @@ def sync_push
         puts "creating repository"
         result = RestClient.post("https://api.github.com/user/repos",
                     { :name => "gitconfig", :description => "My gitconfig" }.to_json,
-                    :accept => :json, :Authorization => "token #$token")
+                      :accept => :json, :Authorization => "token #$token")
     end
 
     Dir.chdir HOME do
