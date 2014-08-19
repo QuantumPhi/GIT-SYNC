@@ -31,7 +31,7 @@ module SyncConfig
 
         Dir.chdir HOME do
             print "Initializing local repository..."
-            git = nil;
+            git = nil
             wait_task {
                 git = Git.init
             }
@@ -59,6 +59,7 @@ module SyncConfig
         authenticate
         Dir.chdir HOME do
             print "Initializing local repository..."
+            git = nil
             wait_task {
                 git = Git.init
             }
