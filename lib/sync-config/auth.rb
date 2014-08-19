@@ -13,8 +13,12 @@ module SyncConfig
     end
 
     def init_auth(password)
-        $token = JSON.parse(RestClient.post("https://#$user:#{password}@api.github.com/authorizations",
-                    { :scopes => ["user", "repo"], :note => "gitconfig-sync" }.to_json, :accept => :json))["token"]
+        print "Fetching access token..."
+        wait_task {
+            $token = JSON.parse(RestClient.post("https://#$user:#{password}@api.github.com/authorizations",
+                        { :scopes => ["user", "repo"], :note => "gitconfig-sync" }.to_json, :accept => :json))["token"]
+        }
+        puts "Done"
         File.open("#{HOME}/.config/gitconfig-sync", "w") do |file|
             file.puts("github.com:\n\tuser: #$user\n\toauth-token: #$token")
         end

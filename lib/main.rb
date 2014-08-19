@@ -19,9 +19,7 @@ module SyncConfig
 
     def push
         print "Checking authentication"
-        wait_task {
-            authenticate
-        }
+        authenticate
         puts "Done"
         if !repo_exists
             print "Creating upstream repository..."
